@@ -21,6 +21,8 @@ let hasAddedPackage = false; // 是否曾经添加过包裹
 let totalEarnings = 0; // 新增：总收入
 let deliveredPackageCount = 0; // 新增：成功派送的包裹数量
 let droppedPackageCount = 0; // 新增：掉落的包裹数量
+let pendingOrderCount = 1; // 新增：待处理订单数量
+let orderIncreaseInterval = null; // 新增：订单增长计时器
 
 // 新增时间场景变量
 let timeSceneIndex = 0; // 0: 白天, 1: 黄昏, 2: 黑夜
@@ -151,6 +153,26 @@ const fixedPackageHeight = 30*1; // 固定包裹高度
 // 添加单个包裹的函数
 function addPackage() {
     if (!gameStarted || gameOver || packageCount >= 100) return; // 检查游戏状态和包裹上限
+    
+    // 减少待处理订单数量
+    if (pendingOrderCount > 0) {
+        pendingOrderCount--;
+        
+        // 更新订单数字显示
+        const orderCountElement = document.getElementById('order-count');
+        if (orderCountElement) {
+            orderCountElement.textContent = pendingOrderCount;
+            
+            // 根据订单数量调整颜色
+            if (pendingOrderCount > 10) {
+                orderCountElement.style.backgroundColor = '#ff0000';
+            } else if (pendingOrderCount > 5) {
+                orderCountElement.style.backgroundColor = '#ff4500';
+            } else {
+                orderCountElement.style.backgroundColor = '#ff4b2b';
+            }
+        }
+    }
     
     // 显示随机客户的需求
     showRandomCustomerRequest();
@@ -402,8 +424,8 @@ function createPackageWithHeight(heightMultiplier) {
         hasAddedPackage = true;
         console.log(`Added ${packageSizeType} #${packageCount} for ${currentCustomer.name} - Distance: ${deliveryDistance}m, Earning: ${deliveryEarning}元`);
         
-        // 显示客户信息提示，添加颜色样式
-        showCustomerToast(currentCustomer.name, `${packageSizeType}已接收`, borderColor);
+        // 移除接受订单的提示
+        // showCustomerToast(currentCustomer.name, `${packageSizeType}已接收`, borderColor);
     };
 }
 
@@ -411,11 +433,10 @@ function createPackageWithHeight(heightMultiplier) {
 function showCustomerToast(name, message, color = '#2196F3') {
     // 创建一个临时的提示框
     const toast = document.createElement('div');
-    toast.className = 'customer-toast';
+    toast.className = 'customer-toast order-accepted'; // 添加接单类名
     toast.innerHTML = `<strong>${name}:</strong> ${message}`;
-    toast.style.backgroundColor = color + 'CC'; // 添加透明度
-    toast.style.color = '#FFFFFF';
     
+    // 不再设置背景色，使用CSS类控制样式
     // 添加到游戏容器
     const container = document.getElementById('canvas-container');
     container.appendChild(toast);
@@ -451,7 +472,57 @@ document.addEventListener('DOMContentLoaded', function() {
     // 重新开始按钮事件
     document.getElementById('restart-button').addEventListener('click', function() {
         // 隐藏游戏结束界面
-        document.getElementById('game-over-screen').style.display = 'none';
+        const gameOverScreen = document.getElementById('game-over-screen');
+        gameOverScreen.style.display = 'none';
+        
+        // 重置结算界面中的动画元素
+        const statItems = document.querySelectorAll('.stat-item');
+        statItems.forEach(item => {
+            // 重置动画状态
+            item.style.animation = 'none';
+            item.style.opacity = '0';
+            
+            // 触发重排
+            void item.offsetWidth;
+            
+            // 恢复动画
+            item.style.animation = '';
+        });
+        
+        // 重置总收入元素的动画
+        const finalEarnings = document.getElementById('final-earnings');
+        if (finalEarnings) {
+            finalEarnings.style.animation = 'none';
+            void finalEarnings.offsetWidth;
+            finalEarnings.style.animation = '';
+        }
+        
+        // 重置星星元素的动画
+        const finalStars = document.getElementById('final-stars');
+        if (finalStars) {
+            finalStars.style.animation = 'none';
+            finalStars.style.opacity = '0';
+            void finalStars.offsetWidth;
+            finalStars.style.animation = '';
+        }
+        
+        // 重置游戏结果文本的动画
+        const gameResult = document.getElementById('game-result');
+        if (gameResult) {
+            gameResult.style.animation = 'none';
+            gameResult.style.opacity = '0';
+            void gameResult.offsetWidth;
+            gameResult.style.animation = '';
+        }
+        
+        // 重置重启按钮的动画
+        const restartButton = document.getElementById('restart-button');
+        if (restartButton) {
+            restartButton.style.animation = 'none';
+            restartButton.style.opacity = '0';
+            void restartButton.offsetWidth;
+            restartButton.style.animation = '';
+        }
         
         // 重置时间场景索引，确保从下一个场景开始
         // 不重置为0，而是保持当前索引，这样每次重新开始都会轮换场景
@@ -484,6 +555,21 @@ function initializeGame() {
     deliveredPackageCount = 0; // 重置成功派送的包裹数量
     droppedPackageCount = 0; // 重置掉落的包裹数量
     packageCount = 0; // 重置包裹总数
+    pendingOrderCount = 1; // 重置待处理订单数量
+    
+    // 重置订单数字显示
+    const orderCountElement = document.getElementById('order-count');
+    if (orderCountElement) {
+        orderCountElement.textContent = pendingOrderCount;
+    }
+    
+    // 清除之前的订单增长计时器
+    if (orderIncreaseInterval) {
+        clearInterval(orderIncreaseInterval);
+    }
+    
+    // 启动订单数字增长计时器
+    startOrderIncreaseTimer();
     
     // 获取游戏容器
     const container = document.getElementById('canvas-container');
@@ -514,6 +600,7 @@ function initializeGame() {
     const timerDisplay = document.getElementById('timer');
     const starsDisplay = document.getElementById('stars');
     const earningsDisplay = document.getElementById('earnings');
+    const distanceDisplay = document.getElementById('distance'); // 添加距离显示元素
     
     if (timerDisplay) {
         timerDisplay.parentNode.removeChild(timerDisplay);
@@ -525,6 +612,11 @@ function initializeGame() {
     
     if (earningsDisplay) {
         earningsDisplay.parentNode.removeChild(earningsDisplay);
+    }
+    
+    // 移除距离显示元素
+    if (distanceDisplay) {
+        distanceDisplay.parentNode.removeChild(distanceDisplay);
     }
     
     // 移除时间场景指示器
@@ -962,7 +1054,7 @@ function initializeGame() {
                     
                     // 如果星星为0，结束游戏
                     if (starCount === 0) {
-                        endGame("所有星星耗尽，游戏结束！");
+                        endGame("评价崩盘，还是换份别的工作吧！");
                     }
                 }
                 
@@ -977,10 +1069,8 @@ function initializeGame() {
         
         // 创建一个临时的提示框
         const toast = document.createElement('div');
-        toast.className = 'customer-toast';
+        toast.className = 'customer-toast order-warning'; // 添加警告类名
         toast.innerHTML = `<strong>警告:</strong> ${packageSizeType}掉落！失去一颗星星！`;
-        toast.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
-        toast.style.color = '#FFFFFF';
         
         // 添加到游戏容器
         const container = document.getElementById('canvas-container');
@@ -1129,18 +1219,6 @@ function initializeGame() {
         }
     });
     
-    // 添加距离显示
-    const distanceDisplay = document.createElement('div');
-    distanceDisplay.id = 'distance';
-    distanceDisplay.style.position = 'absolute';
-    distanceDisplay.style.top = '10px';
-    distanceDisplay.style.left = '10px';
-    distanceDisplay.style.color = 'white';
-    distanceDisplay.style.fontSize = '18px';
-    distanceDisplay.style.textShadow = '1px 1px 2px black';
-    distanceDisplay.textContent = '距离: 0 米';
-    container.appendChild(distanceDisplay);
-    
     // 更新距离显示
     function updateDistanceDisplay() {
         const distanceDisplay = document.getElementById('distance');
@@ -1158,13 +1236,13 @@ function initializeGame() {
         
         // 情况1: 星星数量为0
         if (starCount === 0) {
-            endGame("所有星星耗尽，游戏结束！");
+            endGame("评价崩盘，还是换份别的工作吧！");
             return true;
         }
         
         // 情况2: 游戏时间结束
         if (isTimerStarted && gameTime <= 0) {
-            endGame("时间到！");
+            endGame("该回家吃饭了！");
             return true;
         }
         
@@ -1180,6 +1258,11 @@ function initializeGame() {
             clearInterval(gameTimer);
         }
         
+        // 清除订单增长计时器
+        if (orderIncreaseInterval) {
+            clearInterval(orderIncreaseInterval);
+        }
+        
         // 显示游戏结束界面
         const gameOverScreen = document.getElementById('game-over-screen');
         const scoreElement = document.getElementById('score');
@@ -1192,6 +1275,45 @@ function initializeGame() {
         const droppedCountElement = document.getElementById('dropped-count');
         
         if (gameOverScreen && scoreElement && resultElement && distanceElement) {
+            // 重置所有动画元素的状态
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach((item, index) => {
+                item.style.animation = 'none';
+                item.style.opacity = '0';
+                void item.offsetWidth;
+                item.style.animation = `slideRight 0.5s ease-out forwards ${0.6 + index * 0.2}s`;
+            });
+            
+            // 重置游戏结果文本的动画
+            resultElement.style.animation = 'none';
+            resultElement.style.opacity = '0';
+            void resultElement.offsetWidth;
+            resultElement.style.animation = 'fadeIn 0.8s ease-out forwards 0.3s';
+            
+            // 重置星星元素的动画
+            if (starsElement) {
+                starsElement.style.animation = 'none';
+                starsElement.style.opacity = '0';
+                void starsElement.offsetWidth;
+                starsElement.style.animation = 'starPop 1.5s ease-out forwards 1.4s';
+            }
+            
+            // 重置总收入元素的动画
+            if (earningsElement) {
+                earningsElement.style.animation = 'none';
+                void earningsElement.offsetWidth;
+                earningsElement.style.animation = 'earningsGlow 2s infinite alternate, countUp 1.5s ease-out forwards 1.6s, earningsScale 4s infinite';
+            }
+            
+            // 重置重启按钮的动画
+            const restartButton = document.getElementById('restart-button');
+            if (restartButton) {
+                restartButton.style.animation = 'none';
+                restartButton.style.opacity = '0';
+                void restartButton.offsetWidth;
+                restartButton.style.animation = 'fadeIn 0.8s ease-out forwards 1.8s';
+            }
+            
             // 设置游戏结束原因
             resultElement.textContent = message;
             
@@ -1361,8 +1483,11 @@ function initializeGame() {
                 // 增加成功派送的包裹计数
                 deliveredPackageCount++;
                 
-                // 显示派送成功提示
-                showDeliverySuccessToast(packageBlock);
+                // 移除显示派送成功提示的代码
+                // showDeliverySuccessToast(packageBlock);
+                
+                // 移除派送进度标签
+                removePackageDeliveryProgressLabel(packageBlock);
                 
                 // 从物理世界中移除包裹
                 World.remove(world, packageBlock);
@@ -1435,10 +1560,8 @@ function initializeGame() {
         
         // 创建一个临时的提示框
         const toast = document.createElement('div');
-        toast.className = 'customer-toast';
+        toast.className = 'customer-toast order-completed'; // 添加完成订单类名
         toast.innerHTML = `<strong>派送成功:</strong> ${packageSizeType}已送达！获得 ${earning}元`;
-        toast.style.backgroundColor = 'rgba(76, 175, 80, 0.8)'; // 绿色背景
-        toast.style.color = '#FFFFFF';
         
         // 添加到游戏容器
         const container = document.getElementById('canvas-container');
@@ -1479,61 +1602,45 @@ function startGameTimer() {
     // 创建计时器显示
     const timerDisplay = document.createElement('div');
     timerDisplay.id = 'timer';
-    timerDisplay.style.position = 'absolute';
-    timerDisplay.style.top = '10px';
-    timerDisplay.style.right = '10px';
-    timerDisplay.style.color = 'white';
-    timerDisplay.style.fontSize = '18px';
-    timerDisplay.style.textShadow = '1px 1px 2px black';
-    timerDisplay.textContent = `剩余时间: ${gameTime}秒`;
+    timerDisplay.className = 'remaining-time'; // 添加类名
+    timerDisplay.textContent = `${gameTime}`;
     document.getElementById('canvas-container').appendChild(timerDisplay);
     
     // 添加星级显示
     const starsDisplay = document.createElement('div');
     starsDisplay.id = 'stars';
-    starsDisplay.style.position = 'absolute';
-    starsDisplay.style.top = '40px';
-    starsDisplay.style.right = '10px';
-    starsDisplay.style.color = 'white';
-    starsDisplay.style.fontSize = '18px';
-    starsDisplay.style.textShadow = '1px 1px 2px black';
+    starsDisplay.className = 'stars'; // 添加类名
     updateStarsDisplay(starsDisplay);
     document.getElementById('canvas-container').appendChild(starsDisplay);
     
     // 添加收入显示
     const earningsDisplay = document.createElement('div');
     earningsDisplay.id = 'earnings';
-    earningsDisplay.style.position = 'absolute';
-    earningsDisplay.style.top = '70px';
-    earningsDisplay.style.right = '10px';
-    earningsDisplay.style.color = '#4CAF50';
-    earningsDisplay.style.fontSize = '18px';
-    earningsDisplay.style.textShadow = '1px 1px 2px black';
+    earningsDisplay.className = 'income'; // 添加类名
     earningsDisplay.textContent = `收入: ${totalEarnings}元`;
     document.getElementById('canvas-container').appendChild(earningsDisplay);
     
-    // 添加时间场景指示器
+    // 添加距离显示（移动到这里创建）
+    const distanceDisplay = document.createElement('div');
+    distanceDisplay.id = 'distance';
+    distanceDisplay.className = 'distance'; // 添加类名
+    distanceDisplay.textContent = `距离: ${Math.floor(distance)} 米`;
+    document.getElementById('canvas-container').appendChild(distanceDisplay);
+    
+    // 添加时间场景指示器（已隐藏）
     const timeSceneDisplay = document.createElement('div');
     timeSceneDisplay.id = 'time-scene';
-    timeSceneDisplay.style.position = 'absolute';
-    timeSceneDisplay.style.top = '100px';
-    timeSceneDisplay.style.right = '10px';
-    timeSceneDisplay.style.fontSize = '18px';
-    timeSceneDisplay.style.textShadow = '1px 1px 2px black';
+    timeSceneDisplay.className = 'time'; // 添加类名
     
     // 获取当前时间场景（因为timeSceneIndex已经被更新为下一个场景，所以需要减1）
     const currentSceneIndex = (timeSceneIndex + timeScenes.length - 1) % timeScenes.length;
     const currentScene = timeScenes[currentSceneIndex];
-    console.log(`时间场景指示器显示: ${currentScene.name}, 索引: ${currentSceneIndex}`);
     
     if (currentScene.name === "白天") {
-        timeSceneDisplay.style.color = '#FFD700'; // 金色
         timeSceneDisplay.innerHTML = '☀️ 白天';
     } else if (currentScene.name === "黄昏") {
-        timeSceneDisplay.style.color = '#FFA500'; // 橙色
         timeSceneDisplay.innerHTML = '🌆 黄昏';
     } else {
-        timeSceneDisplay.style.color = '#ADD8E6'; // 淡蓝色
         timeSceneDisplay.innerHTML = '🌙 夜晚';
     }
     
@@ -1545,7 +1652,7 @@ function startGameTimer() {
         updateTimerDisplay();
         
         if (gameTime <= 0) {
-            endGame("时间到！");
+            endGame("该回家吃饭了！");
             clearInterval(gameTimer);
         }
     }, 1000);
@@ -1555,11 +1662,13 @@ function startGameTimer() {
 function updateTimerDisplay() {
     const timerDisplay = document.getElementById('timer');
     if (timerDisplay) {
-        timerDisplay.textContent = `剩余时间: ${gameTime}秒`;
+        timerDisplay.textContent = `${gameTime}`;
         
-        // 时间少于10秒时显示为红色
+        // 时间少于10秒时添加紧急样式
         if (gameTime <= 10) {
-            timerDisplay.style.color = '#ff0000';
+            timerDisplay.classList.add('urgent');
+        } else {
+            timerDisplay.classList.remove('urgent');
         }
     }
 }
@@ -1576,15 +1685,6 @@ function updateStarsDisplay(displayElement = null) {
             starsText += '☆';
         }
         starsDisplay.textContent = starsText;
-        
-        // 根据星星数量变更颜色
-        if (starCount <= 1) {
-            starsDisplay.style.color = '#ff0000'; // 红色
-        } else if (starCount <= 3) {
-            starsDisplay.style.color = '#ffcc00'; // 黄色
-        } else {
-            starsDisplay.style.color = '#00ff00'; // 绿色
-        }
     }
 }
 
@@ -1593,6 +1693,14 @@ function updateEarningsDisplay() {
     const earningsDisplay = document.getElementById('earnings');
     if (earningsDisplay) {
         earningsDisplay.textContent = `收入: ${totalEarnings}元`;
+    }
+}
+
+// 更新距离显示
+function updateDistanceDisplay() {
+    const distanceDisplay = document.getElementById('distance');
+    if (distanceDisplay) {
+        distanceDisplay.textContent = `距离: ${Math.floor(distance)} 米`;
     }
 }
 
@@ -1707,4 +1815,63 @@ function updateBackgroundImages(forceUpdate = false, scene = null) {
     }).catch(error => {
         console.error(`背景图片加载失败: ${error}`);
     });
-} 
+}
+
+// 启动订单数字增长计时器
+function startOrderIncreaseTimer() {
+    // 随机间隔时间（2-5秒）增加订单数量
+    orderIncreaseInterval = setInterval(() => {
+        if (!gameOver) {
+            // 增加订单数量
+            increaseOrderCount();
+        } else {
+            // 游戏结束时清除计时器
+            clearInterval(orderIncreaseInterval);
+        }
+    }, Math.random() * 3000 + 2000); // 2-5秒随机间隔
+}
+
+// 增加订单数量
+function increaseOrderCount() {
+    // 随机增加1-3个订单
+    const increase = Math.floor(Math.random() * 3) + 1;
+    pendingOrderCount += increase;
+    
+    // 更新显示
+    const orderCountElement = document.getElementById('order-count');
+    if (orderCountElement) {
+        // 保存原来的动画
+        const originalAnimation = orderCountElement.style.animation;
+        
+        // 移除动画
+        orderCountElement.style.animation = 'none';
+        
+        // 触发重排
+        void orderCountElement.offsetWidth;
+        
+        // 更新文本并添加增长动画
+        orderCountElement.textContent = pendingOrderCount;
+        orderCountElement.style.animation = 'orderCountIncrease 0.5s ease-out, pulse 1s infinite';
+        
+        // 如果订单数量超过一定值，增加紧迫感
+        if (pendingOrderCount > 10) {
+            orderCountElement.style.backgroundColor = '#ff0000';
+        } else if (pendingOrderCount > 5) {
+            orderCountElement.style.backgroundColor = '#ff4500';
+        }
+    }
+    
+    // 如果订单数量过多，可以添加提示音效或视觉效果
+    if (pendingOrderCount > 15) {
+        // 这里可以添加紧急提示效果
+        const addPackageButton = document.getElementById('add-package');
+        if (addPackageButton) {
+            addPackageButton.classList.add('urgent');
+            
+            // 2秒后移除紧急效果
+            setTimeout(() => {
+                addPackageButton.classList.remove('urgent');
+            }, 2000);
+        }
+    }
+}

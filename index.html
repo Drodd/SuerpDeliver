@@ -12,7 +12,7 @@
         <div class="setup-container">
             <h2>快递搁浅</h2>
             <div class="game-description">
-                <p>在这个充满挑战的世界中，你是一名快递员，驾驶摩托车穿梭于城市之间。</p>
+                <p>惨遭裁员的小王决定做一名快递员，你能帮他成功逆袭么？</p>
                 <p>接收并派送包裹，克服各种困难，赚取收入！</p>
             </div>
             <button id="start-game" class="start-button btn btn-primary">开始冒险</button>
@@ -22,7 +22,8 @@
         <div id="canvas-container">
             <canvas id="game-canvas"></canvas>
             <button id="add-package" class="control-button package-button overlay-btn">
-                <span class="button-text">接单</span>
+                <span class="button-text">抢单</span>
+                <span id="order-count" class="order-count">1</span>
             </button>
             <div id="customer-popup" class="customer-popup" style="display: none;">
                 <div class="customer-header">

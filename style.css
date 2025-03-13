@@ -74,7 +74,7 @@ h1 {
     margin: 0 auto 15px;
     border: none;
     border-radius: 15px;
-    overflow: hidden;
+    overflow: visible;
     background-color: #fafafa;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     flex: 1;
@@ -692,14 +692,18 @@ h1 {
     bottom: 100px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(to right, #f7b733, #fc4a1a);
+    background: rgba(0, 0, 0, 0.5);
     color: white;
-    padding: 12px 25px;
+    padding: 10px 20px;
     border-radius: 50px;
     font-size: 16px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     z-index: 90;
     animation: slideUp 0.4s ease-out forwards;
+    backdrop-filter: blur(2px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    max-width: 80%;
+    text-align: center;
 }
 
 @keyframes slideUp {
@@ -719,6 +723,21 @@ h1 {
 .customer-toast strong {
     font-weight: bold;
     margin-right: 5px;
+}
+
+/* 接单消息样式 */
+.customer-toast.order-accepted strong {
+    color: #FFD700;
+}
+
+/* 完成订单消息样式 */
+.customer-toast.order-completed strong {
+    color: #4CAF50;
+}
+
+/* 警告消息样式 */
+.customer-toast.order-warning strong {
+    color: #FF5252;
 }
 
 .game-description {
@@ -908,7 +927,7 @@ h1 {
     box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
     backdrop-filter: blur(5px) !important;
-    background: linear-gradient(to right, #3498db, #2ecc71) !important;
+    background: linear-gradient(to right, #ff416c, #ff4b2b) !important;
     font-size: 24px !important;
     padding: 20px 45px !important;
     min-width: 220px !important;
@@ -924,10 +943,11 @@ h1 {
     margin: 0 !important;
     /* 确保不会继承其他按钮的变换效果 */
     transform-origin: center !important;
+    overflow: visible !important;
 }
 
 .overlay-btn:hover {
-    background: linear-gradient(to right, #2980b9, #27ae60) !important;
+    background: linear-gradient(to right, #e03e61, #e43c1e) !important;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4) !important;
     border: 2px solid rgba(255, 255, 255, 0.5) !important;
     transform: translateX(-50%) !important;
@@ -936,7 +956,7 @@ h1 {
 }
 
 .overlay-btn:active {
-    background: linear-gradient(to right, #1f6aa5, #1e8449) !important;
+    background: linear-gradient(to right, #c0354f, #c32e15) !important;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3) !important;
     transform: translateX(-50%) !important;
     /* 确保不会继承其他按钮的active效果 */
@@ -1083,6 +1103,21 @@ h1 {
         padding: 8px 18px;
         font-size: 14px;
     }
+    
+    .order-count {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+        top: -10px;
+        right: -10px;
+        z-index: 100;
+        overflow: visible;
+    }
+    
+    .distance {
+        top: 130px !important; /* 调整在剩余时间下方的位置 */
+        font-size: 14px !important;
+    }
 }
 
 /* 小屏幕设备适配 */
@@ -1156,6 +1191,21 @@ h1 {
         padding: 6px 15px;
         font-size: 13px;
     }
+    
+    .order-count {
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+        top: -8px;
+        right: -8px;
+        z-index: 100;
+        overflow: visible;
+    }
+    
+    .distance {
+        top: 100px !important; /* 调整在剩余时间下方的位置 */
+        font-size: 12px !important;
+    }
 }
 
 /* 游戏结算界面样式 */
@@ -1177,8 +1227,11 @@ h1 {
     border: 1px solid rgba(255, 255, 255, 0.1);
     animation: fadeInScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     overflow: hidden;
+    max-height: 90vh;
+    overflow-y: auto;
 }
 
+/* 确保动画可以重新播放 */
 @keyframes fadeInScale {
     0% {
         opacity: 0;
@@ -1188,6 +1241,55 @@ h1 {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
     }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes slideDown {
+    0% { transform: translateY(-20px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes expandWidth {
+    0% { width: 0; }
+    100% { width: 100px; }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes slideRight {
+    0% { transform: translateX(-20px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes countUp {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes starPop {
+    0% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes earningsGlow {
+    from { text-shadow: 0 0 15px rgba(76, 175, 80, 0.7); }
+    to { text-shadow: 0 0 25px rgba(76, 175, 80, 0.9), 0 0 40px rgba(76, 175, 80, 0.5); }
+}
+
+/* 确保动画可以重新播放 */
+@keyframes earningsScale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
 }
 
 #game-over-screen::before {
@@ -1249,11 +1351,6 @@ h1 {
     animation: expandWidth 0.8s ease-out forwards;
 }
 
-@keyframes expandWidth {
-    0% { width: 0; }
-    100% { width: 100px; }
-}
-
 #game-result {
     font-size: 1.2rem;
     margin-bottom: 20px;
@@ -1267,11 +1364,6 @@ h1 {
     opacity: 0;
 }
 
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-}
-
 .game-stats-container {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
@@ -1282,6 +1374,8 @@ h1 {
     animation: fadeIn 0.8s ease-out forwards;
     animation-delay: 0.5s;
     opacity: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .stat-item {
@@ -1307,34 +1401,99 @@ h1 {
     100% { transform: translateX(0); opacity: 1; }
 }
 
+/* 突出显示总收入 */
 .stat-item:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
+    margin: 15px 0;
+    padding: 20px;
+    border: 2px solid rgba(76, 175, 80, 0.3);
+    border-radius: 12px;
+    background: linear-gradient(to right, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.2));
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    transform: scale(1.05);
+    order: -1; /* 将总收入移到最前面 */
     border-bottom: none;
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-label {
-    font-size: 1.1rem;
-    color: #adb5bd;
-    display: flex;
-    align-items: center;
+.stat-item:last-child::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(76, 175, 80, 0.2) 0%, transparent 70%);
+    animation: rotateBg 8s linear infinite;
+    z-index: 0;
 }
 
-.stat-label i {
-    margin-right: 10px;
-    font-size: 1.3rem;
-    animation: pulse 2s infinite;
+@keyframes rotateBg {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
+.stat-item:last-child .stat-label,
+.stat-item:last-child .stat-value {
+    position: relative;
+    z-index: 1;
 }
 
-.stat-value {
-    font-size: 1.3rem;
+.stat-item:last-child .stat-label {
+    font-size: 1.4rem;
+    color: #e0e0e0;
     font-weight: bold;
+    text-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.stat-item:last-child .stat-value {
+    font-size: 2.2rem;
+}
+
+.stat-item:last-child .stat-label i {
+    font-size: 1.8rem;
+    color: #FFD700;
+    animation: coinPulse 2s infinite;
+    margin-right: 15px;
+}
+
+@keyframes coinPulse {
+    0% { transform: scale(1); text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+    50% { transform: scale(1.2); text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.4); }
+    100% { transform: scale(1); text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+}
+
+#final-earnings {
+    color: #4CAF50;
+    font-size: 2.2rem;
+    text-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
+    animation: earningsGlow 2s infinite alternate, countUp 1.5s ease-out forwards, earningsScale 4s infinite;
+    animation-delay: 0s, 1.6s, 0s;
+    font-weight: bold;
+    display: inline-block;
+}
+
+/* 弱化其他信息 */
+.stat-item:not(:last-child) {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.stat-item:not(:last-child):hover {
+    opacity: 1;
+}
+
+.stat-item:not(:last-child) .stat-label {
+    font-size: 0.9rem;
+    color: #adb5bd;
+}
+
+.stat-item:not(:last-child) .stat-value {
+    font-size: 1.1rem;
 }
 
 #score, #delivered-count {
@@ -1365,11 +1524,6 @@ h1 {
     animation-delay: 1.2s;
 }
 
-@keyframes countUp {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-
 #final-stars {
     color: #FFD700;
     font-size: 1.5rem;
@@ -1380,18 +1534,79 @@ h1 {
     opacity: 0;
 }
 
-@keyframes starPop {
-    0% { opacity: 0; transform: scale(0.5); }
-    50% { opacity: 1; transform: scale(1.2); }
-    100% { opacity: 1; transform: scale(1); }
+/* 响应式调整 */
+@media (max-height: 700px) {
+    .stat-item:last-child {
+        padding: 15px;
+        margin: 10px 0 20px 0;
+    }
+    
+    .stat-item:last-child .stat-label {
+        font-size: 1.2rem;
+    }
+    
+    .stat-item:last-child .stat-value {
+        font-size: 1.8rem;
+    }
+    
+    .stat-item:last-child .stat-label i {
+        font-size: 1.5rem;
+        margin-right: 10px;
+    }
+    
+    #final-earnings {
+        font-size: 1.8rem;
+    }
+    
+    .stat-item:not(:last-child) {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+    }
+    
+    .stat-item:not(:last-child) .stat-label {
+        font-size: 0.85rem;
+    }
+    
+    .stat-item:not(:last-child) .stat-value {
+        font-size: 1rem;
+    }
 }
 
-#final-earnings {
-    color: #4CAF50;
-    font-size: 1.5rem;
-    text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
-    animation: countUp 1.5s ease-out forwards;
-    animation-delay: 1.6s;
+@media (max-width: 480px) {
+    .stat-item:last-child {
+        padding: 12px;
+        margin: 8px 0 15px 0;
+    }
+    
+    .stat-item:last-child .stat-label {
+        font-size: 1.1rem;
+    }
+    
+    .stat-item:last-child .stat-value {
+        font-size: 1.6rem;
+    }
+    
+    .stat-item:last-child .stat-label i {
+        font-size: 1.3rem;
+        margin-right: 8px;
+    }
+    
+    #final-earnings {
+        font-size: 1.6rem;
+    }
+    
+    .stat-item:not(:last-child) {
+        margin-bottom: 6px;
+        padding-bottom: 6px;
+    }
+    
+    .stat-item:not(:last-child) .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .stat-item:not(:last-child) .stat-value {
+        font-size: 0.9rem;
+    }
 }
 
 #restart-button {
@@ -1462,5 +1677,301 @@ h1 {
         padding: 12px 25px;
         font-size: 1rem;
         margin-top: 15px;
+    }
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    color: #adb5bd;
+    display: flex;
+    align-items: center;
+}
+
+.stat-label i {
+    margin-right: 10px;
+    font-size: 1.3rem;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.stat-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+/* 抢单按钮上的订单数字样式 */
+.order-count {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    background: #ff4b2b;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    animation: pulse 1s infinite;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    z-index: 100;
+    transform: scale(1);
+    transform-origin: center;
+    overflow: visible;
+}
+
+@keyframes orderCountIncrease {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* 紧急状态样式 */
+.urgent {
+    animation: urgentPulse 0.5s infinite alternate !important;
+}
+
+@keyframes urgentPulse {
+    0% {
+        transform: translateX(-50%) scale(1) !important;
+        box-shadow: 0 6px 20px rgba(255, 0, 0, 0.5) !important;
+    }
+    100% {
+        transform: translateX(-50%) scale(1.05) !important;
+        box-shadow: 0 8px 30px rgba(255, 0, 0, 0.8) !important;
+    }
+}
+
+/* 信息展示样式 */
+.info-display {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 10px;
+}
+
+.info-item {
+    margin-bottom: 8px;
+    font-size: 16px;
+    color: #333;
+}
+
+.info-item.important {
+    font-size: 18px;
+    font-weight: bold;
+    color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.info-item span {
+    display: inline-block;
+    margin-right: 5px;
+}
+
+/* 剩余时间和收入样式 */
+.remaining-time, .income {
+    font-size: 20px;
+    font-weight: bold;
+    color: #e67e22;
+    background: rgba(255, 223, 186, 0.8);
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    margin-bottom: 10px;
+}
+
+/* 其他信息样式 */
+.stars, .distance, .time {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+/* 剩余时间样式 - 居中显示并放大5倍 */
+.remaining-time {
+    position: absolute !important;
+    top: 50px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    font-size: 120px !important; /* 放大5倍 */
+    font-weight: bold !important;
+    color: #fff !important;
+    background: transparent !important; /* 移除背景 */
+    padding: 10px 30px !important;
+    border-radius: 20px !important;
+    box-shadow: none !important; /* 移除盒子阴影 */
+    z-index: 90 !important;
+    text-align: center !important;
+    min-width: 400px !important;
+    border: none !important; /* 移除边框 */
+    animation: timeFlash 1.5s infinite alternate !important;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 30px rgba(231, 76, 60, 0.8) !important; /* 增强文字阴影 */
+    line-height: 1.2 !important;
+}
+
+@keyframes timeFlash {
+    0% {
+        text-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(231, 76, 60, 0.6);
+    }
+    100% {
+        text-shadow: 0 4px 12px rgba(0,0,0,0.7), 0 0 40px rgba(231, 76, 60, 0.9);
+    }
+}
+
+/* 星级评价 - 左上角显示，放大2倍 */
+.stars {
+    position: absolute !important;
+    top: 20px !important;
+    left: 20px !important;
+    font-size: 36px !important; /* 放大2倍 */
+    color: #FFD700 !important;
+    background: rgba(0, 0, 0, 0.6) !important;
+    padding: 10px 15px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important;
+    z-index: 70 !important;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8) !important;
+    letter-spacing: 4px !important;
+    border: 2px solid rgba(255, 215, 0, 0.3) !important;
+    backdrop-filter: blur(3px) !important;
+}
+
+/* 收入样式 - 右上角显示，放大2倍 */
+.income {
+    position: absolute !important;
+    top: 20px !important;
+    right: 20px !important;
+    font-size: 40px !important; /* 放大2倍 */
+    font-weight: bold !important;
+    color: #fff !important;
+    background: linear-gradient(to right, rgba(46, 204, 113, 0.8), rgba(39, 174, 96, 0.8)) !important;
+    padding: 10px 20px !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
+    z-index: 80 !important;
+    text-align: right !important;
+    border: 2px solid rgba(255, 255, 255, 0.4) !important;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.4) !important;
+    backdrop-filter: blur(3px) !important;
+}
+
+/* 距离信息 - 放在剩余时间下方，居中显示 */
+.distance {
+    position: absolute !important;
+    top: 180px !important; /* 位于剩余时间下方 */
+    left: 50% !important; /* 居中对齐 */
+    transform: translateX(-50%) !important;
+    font-size: 16px !important; /* 字号不变 */
+    color: #fff !important;
+    background: transparent !important; /* 移除背景 */
+    padding: 5px 10px !important;
+    border-radius: 8px !important;
+    box-shadow: none !important; /* 移除阴影 */
+    z-index: 60 !important;
+    text-align: center !important;
+    border: none !important; /* 移除边框 */
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5) !important; /* 添加文字阴影增强可读性 */
+}
+
+/* 移除时间信息显示 */
+.time {
+    display: none !important;
+}
+
+/* 当剩余时间少于10秒时的紧急样式 */
+.remaining-time.urgent {
+    background: transparent !important; /* 移除背景 */
+    animation: urgentTimeFlash 0.8s infinite alternate !important;
+    font-size: 130px !important; /* 紧急状态下稍微放大 */
+    border: none !important; /* 移除边框 */
+    color: #ff4b2b !important; /* 设置为红色 */
+}
+
+@keyframes urgentTimeFlash {
+    0% {
+        transform: translateX(-50%) scale(1);
+        text-shadow: 0 4px 8px rgba(0,0,0,0.5), 0 0 20px rgba(255, 0, 0, 0.6);
+    }
+    100% {
+        transform: translateX(-50%) scale(1.05);
+        text-shadow: 0 4px 12px rgba(0,0,0,0.7), 0 0 50px rgba(255, 0, 0, 0.9);
+    }
+}
+
+/* 移动设备适配 */
+@media (max-width: 768px) {
+    .remaining-time {
+        font-size: 80px !important; /* 小屏幕上稍微缩小 */
+        padding: 8px 20px !important;
+        min-width: 300px !important;
+        top: 40px !important;
+    }
+    
+    .income {
+        font-size: 30px !important;
+        padding: 8px 15px !important;
+    }
+    
+    .stars {
+        font-size: 28px !important;
+        padding: 8px 12px !important;
+    }
+    
+    .distance {
+        top: 130px !important; /* 调整在剩余时间下方的位置 */
+        font-size: 14px !important;
+    }
+    
+    .remaining-time.urgent {
+        font-size: 90px !important;
+    }
+}
+
+/* 小屏幕设备适配 */
+@media (max-width: 480px) {
+    .remaining-time {
+        font-size: 60px !important;
+        padding: 6px 15px !important;
+        min-width: 200px !important;
+        top: 30px !important;
+        border-width: 2px !important;
+    }
+    
+    .income {
+        font-size: 24px !important;
+        padding: 6px 12px !important;
+        top: 15px !important;
+        right: 15px !important;
+    }
+    
+    .stars {
+        font-size: 22px !important;
+        padding: 6px 10px !important;
+        top: 15px !important;
+        left: 15px !important;
+        letter-spacing: 3px !important;
+    }
+    
+    .distance {
+        top: 100px !important; /* 调整在剩余时间下方的位置 */
+        font-size: 12px !important;
+    }
+    
+    .remaining-time.urgent {
+        font-size: 65px !important;
     }
 } 
