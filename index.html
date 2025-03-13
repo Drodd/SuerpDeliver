@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快递搁浅</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="setup-screen" class="setup-screen">
+        <div class="setup-container">
+            <h2>快递搁浅</h2>
+            <div class="game-description">
+                <p>在这个充满挑战的世界中，你是一名快递员，驾驶摩托车穿梭于城市之间。</p>
+                <p>接收并派送包裹，克服各种困难，赚取收入！</p>
+            </div>
+            <button id="start-game" class="start-button btn btn-primary">开始冒险</button>
+        </div>
+    </div>
+    <div id="game-container" class="game-container" style="display: none;">
+        <div id="canvas-container">
+            <canvas id="game-canvas"></canvas>
+            <div id="customer-popup" class="customer-popup" style="display: none;">
+                <div class="customer-header">
+                    <span id="customer-name" class="customer-name">客户姓名</span>
+                    <span id="customer-identity" class="customer-identity">身份</span>
+                </div>
+                <div id="customer-request" class="customer-request">需求内容</div>
+                <div class="order-info-container">
+                    <div class="package-info">
+                        <div class="package-icon-container">
+                            <div id="package-icon" class="package-icon"></div>
+                            <div id="package-size" class="package-size">小型包裹</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="accept-request" class="accept-request btn btn-primary">接单</button>
+                    <button id="decline-request" class="decline-request btn btn-secondary">拒绝</button>
+                </div>
+            </div>
+        </div>
+        <div id="bottom-controls">
+            <button id="add-package" class="control-button package-button btn btn-secondary super-large-btn">
+                <span class="button-text">接单</span>
+            </button>
+        </div>
+        <div id="controls">
+            <button id="brake" class="control-button brake-button btn btn-danger large-control-btn">
+                <span class="button-text">刹车</span>
+            </button>
+            <div id="speed" class="speed-display">速度: 0%</div>
+            <button id="accelerate" class="control-button accelerate-button btn btn-primary large-control-btn">
+                <span class="button-text">油门</span>
+            </button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <script src="script.js"></script>
+    
+    <!-- 游戏结算界面 -->
+    <div id="game-over-screen" style="display: none;">
+        <h2>游戏结束</h2>
+        <div id="game-result">游戏结束原因</div>
+        <div class="game-stats-container">
+            <div class="stat-item">
+                <div class="stat-label">
+                    <i>🎯</i> 成功配送
+                </div>
+                <div class="stat-value"><span id="score">0</span> 个包裹</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <i>📦</i> 包裹统计
+                </div>
+                <div class="stat-value">
+                    派送成功 <span id="delivered-count">0</span> 个, 
+                    掉落 <span id="dropped-count">0</span> 个
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <i>🛣️</i> 行驶距离
+                </div>
+                <div class="stat-value"><span id="final-distance">0</span> 米</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <i>⏱️</i> 用时
+                </div>
+                <div class="stat-value"><span id="final-time">0</span> 秒</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <i>⭐</i> 星级评价
+                </div>
+                <div class="stat-value"><span id="final-stars"></span></div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-label">
+                    <i>💰</i> 总收入
+                </div>
+                <div class="stat-value"><span id="final-earnings">0</span> 元</div>
+            </div>
+        </div>
+        <button id="restart-button">重新开始</button>
+    </div>
+</body>
+</html> 
