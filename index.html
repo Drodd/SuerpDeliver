@@ -21,6 +21,9 @@
     <div id="game-container" class="game-container" style="display: none;">
         <div id="canvas-container">
             <canvas id="game-canvas"></canvas>
+            <button id="add-package" class="control-button package-button overlay-btn">
+                <span class="button-text">接单</span>
+            </button>
             <div id="customer-popup" class="customer-popup" style="display: none;">
                 <div class="customer-header">
                     <span id="customer-name" class="customer-name">客户姓名</span>
@@ -41,11 +44,6 @@
                     <button id="decline-request" class="decline-request btn btn-secondary">拒绝</button>
                 </div>
             </div>
-        </div>
-        <div id="bottom-controls">
-            <button id="add-package" class="control-button package-button btn btn-secondary super-large-btn">
-                <span class="button-text">接单</span>
-            </button>
         </div>
         <div id="controls">
             <button id="brake" class="control-button brake-button btn btn-danger large-control-btn">

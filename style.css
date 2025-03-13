@@ -879,6 +879,54 @@ h1 {
     }
 }
 
+/* 叠放在场景上的按钮 */
+.overlay-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 50;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+    background: linear-gradient(to right, #3498db, #2ecc71);
+    font-size: 24px;
+    padding: 20px 45px;
+    min-width: 220px;
+    height: 75px;
+    animation: pulseOverlay 2s infinite;
+    transition: all 0.3s ease;
+    color: white;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-align: center;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+.overlay-btn:hover {
+    background: linear-gradient(to right, #2980b9, #27ae60);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+.overlay-btn:active {
+    background: linear-gradient(to right, #1f6aa5, #1e8449);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+@keyframes pulseOverlay {
+    0% {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+    50% {
+        box-shadow: 0 8px 25px rgba(46, 204, 113, 0.5), 0 0 20px rgba(52, 152, 219, 0.4);
+    }
+    100% {
+        box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    }
+}
+
 /* 底部控制区域 */
 #bottom-controls {
     display: flex;
@@ -930,6 +978,14 @@ h1 {
         font-size: 20px;
         min-width: 180px;
         height: 65px;
+    }
+    
+    .overlay-btn {
+        padding: 16px 35px;
+        font-size: 20px;
+        min-width: 180px;
+        height: 65px;
+        bottom: 15px;
     }
     
     #controls, #bottom-controls {
