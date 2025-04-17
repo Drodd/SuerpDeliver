@@ -470,40 +470,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 重新开始按钮事件
-    document.getElementById('restart-button').addEventListener('click', function() {
+    document.getElementById('restart-button').addEventListener('click', () => {
         // 隐藏游戏结束界面
         const gameOverScreen = document.getElementById('game-over-screen');
-        gameOverScreen.style.display = 'none';
+        if (gameOverScreen) {
+            gameOverScreen.style.display = 'none';
+        }
         
-        // 重置结算界面中的动画元素
+        // 重置所有动画元素的状态
         const statItems = document.querySelectorAll('.stat-item');
         statItems.forEach(item => {
-            // 重置动画状态
             item.style.animation = 'none';
             item.style.opacity = '0';
-            
-            // 触发重排
-            void item.offsetWidth;
-            
-            // 恢复动画
-            item.style.animation = '';
         });
-        
-        // 重置总收入元素的动画
-        const finalEarnings = document.getElementById('final-earnings');
-        if (finalEarnings) {
-            finalEarnings.style.animation = 'none';
-            void finalEarnings.offsetWidth;
-            finalEarnings.style.animation = '';
-        }
         
         // 重置星星元素的动画
         const finalStars = document.getElementById('final-stars');
         if (finalStars) {
             finalStars.style.animation = 'none';
             finalStars.style.opacity = '0';
-            void finalStars.offsetWidth;
-            finalStars.style.animation = '';
         }
         
         // 重置游戏结果文本的动画
@@ -511,8 +496,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (gameResult) {
             gameResult.style.animation = 'none';
             gameResult.style.opacity = '0';
-            void gameResult.offsetWidth;
-            gameResult.style.animation = '';
         }
         
         // 重置重启按钮的动画
@@ -520,12 +503,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (restartButton) {
             restartButton.style.animation = 'none';
             restartButton.style.opacity = '0';
-            void restartButton.offsetWidth;
-            restartButton.style.animation = '';
         }
         
         // 重置时间场景索引，确保从下一个场景开始
-        // 不重置为0，而是保持当前索引，这样每次重新开始都会轮换场景
         console.log(`重新开始游戏，当前时间场景索引: ${timeSceneIndex}`);
         
         // 重新初始化游戏
