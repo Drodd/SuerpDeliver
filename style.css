@@ -1217,7 +1217,7 @@ h1 {
 
 /* 游戏结算界面样式 */
 #game-over-screen {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -1225,6 +1225,7 @@ h1 {
     max-width: 500px;
     background: rgba(0, 0, 0, 0.85);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-radius: 20px;
     padding: 30px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
@@ -1232,10 +1233,101 @@ h1 {
     text-align: center;
     color: white;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    animation: fadeInScale 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    overflow: hidden;
-    max-height: 90vh;
     overflow-y: auto;
+    max-height: 90vh;
+}
+
+/* 移动设备上强制显示游戏结束界面并禁用动画 */
+@media (max-width: 768px) {
+    #game-over-screen {
+        padding: 20px 15px;
+        width: 95%;
+    }
+    
+    #game-over-screen h2 {
+        font-size: 2rem;
+        margin-bottom: 15px;
+        opacity: 1 !important;
+        animation: none !important;
+    }
+    
+    #game-over-screen h2::after {
+        animation: none !important;
+        width: 100px;
+    }
+    
+    #game-result {
+        opacity: 1 !important;
+        animation: none !important;
+    }
+    
+    .game-stats-container {
+        padding: 15px;
+        margin: 15px 0;
+        opacity: 1 !important;
+        animation: none !important;
+    }
+    
+    .stat-item {
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        opacity: 1 !important;
+        animation: none !important;
+    }
+    
+    #final-stars {
+        opacity: 1 !important;
+        animation: none !important;
+    }
+    
+    #final-earnings {
+        animation: none !important;
+    }
+    
+    #restart-button {
+        padding: 12px 25px;
+        font-size: 1rem;
+        margin-top: 15px;
+        opacity: 1 !important;
+        animation: none !important;
+    }
+}
+
+/* 小屏幕设备进一步优化 */
+@media (max-width: 480px) {
+    #game-over-screen {
+        padding: 15px 10px;
+        width: 95%;
+    }
+    
+    #game-over-screen h2 {
+        font-size: 1.8rem;
+        margin-bottom: 10px;
+    }
+    
+    .game-stats-container {
+        padding: 10px;
+        margin: 10px 0;
+    }
+    
+    .stat-item {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+    }
+    
+    .stat-label {
+        font-size: 0.8rem;
+    }
+    
+    .stat-value {
+        font-size: 1rem;
+    }
+    
+    #restart-button {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        margin-top: 10px;
+    }
 }
 
 /* 确保动画可以重新播放 */

@@ -477,6 +477,12 @@ document.addEventListener('DOMContentLoaded', function() {
             gameOverScreen.style.display = 'none';
         }
         
+        // 移除动画样式（防止在移动设备上出现问题）
+        const allElements = gameOverScreen.querySelectorAll('*');
+        allElements.forEach(el => {
+            el.style.animation = 'none';
+        });
+        
         // 重置游戏结束界面中的数据
         const scoreElement = document.getElementById('score');
         const resultElement = document.getElementById('game-result');
@@ -508,7 +514,9 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(`重新开始游戏，当前时间场景索引: ${timeSceneIndex}`);
         
         // 重新初始化游戏
-        initializeGame();
+        setTimeout(() => {
+            initializeGame();
+        }, 100); // 添加短暂延迟确保DOM更新完成
     });
 
     // 添加"添加包裹"按钮功能
@@ -1258,6 +1266,9 @@ function initializeGame() {
             return;
         }
         
+        // 检测是否为移动设备
+        const isMobile = window.innerWidth <= 768;
+        
         // 设置游戏结束原因
         if (resultElement) resultElement.textContent = message;
         
@@ -1290,49 +1301,61 @@ function initializeGame() {
         // 设置总收入
         if (earningsElement) earningsElement.textContent = totalEarnings;
         
-        // 重置所有动画元素的状态
-        const statItems = document.querySelectorAll('.stat-item');
-        statItems.forEach((item, index) => {
-            item.style.animation = 'none';
-            item.style.opacity = '0';
-            void item.offsetWidth;
-            item.style.animation = `slideRight 0.5s ease-out forwards ${0.6 + index * 0.2}s`;
-        });
-        
-        // 重置游戏结果文本的动画
-        if (resultElement) {
-            resultElement.style.animation = 'none';
-            resultElement.style.opacity = '0';
-            void resultElement.offsetWidth;
-            resultElement.style.animation = 'fadeIn 0.8s ease-out forwards 0.3s';
-        }
-        
-        // 重置星星元素的动画
-        if (starsElement) {
-            starsElement.style.animation = 'none';
-            starsElement.style.opacity = '0';
-            void starsElement.offsetWidth;
-            starsElement.style.animation = 'starPop 1.5s ease-out forwards 1.4s';
-        }
-        
-        // 重置总收入元素的动画
-        if (earningsElement) {
-            earningsElement.style.animation = 'none';
-            void earningsElement.offsetWidth;
-            earningsElement.style.animation = 'earningsGlow 2s infinite alternate, countUp 1.5s ease-out forwards 1.6s, earningsScale 4s infinite';
-        }
-        
-        // 重置重启按钮的动画
-        const restartButton = document.getElementById('restart-button');
-        if (restartButton) {
-            restartButton.style.animation = 'none';
-            restartButton.style.opacity = '0';
-            void restartButton.offsetWidth;
-            restartButton.style.animation = 'fadeIn 0.8s ease-out forwards 1.8s';
+        // 在PC设备上应用动画效果
+        if (!isMobile) {
+            // 重置所有动画元素的状态
+            const statItems = document.querySelectorAll('.stat-item');
+            statItems.forEach((item, index) => {
+                item.style.animation = 'none';
+                item.style.opacity = '0';
+                void item.offsetWidth;
+                item.style.animation = `slideRight 0.5s ease-out forwards ${0.6 + index * 0.2}s`;
+            });
+            
+            // 重置游戏结果文本的动画
+            if (resultElement) {
+                resultElement.style.animation = 'none';
+                resultElement.style.opacity = '0';
+                void resultElement.offsetWidth;
+                resultElement.style.animation = 'fadeIn 0.8s ease-out forwards 0.3s';
+            }
+            
+            // 重置星星元素的动画
+            if (starsElement) {
+                starsElement.style.animation = 'none';
+                starsElement.style.opacity = '0';
+                void starsElement.offsetWidth;
+                starsElement.style.animation = 'starPop 1.5s ease-out forwards 1.4s';
+            }
+            
+            // 重置总收入元素的动画
+            if (earningsElement) {
+                earningsElement.style.animation = 'none';
+                void earningsElement.offsetWidth;
+                earningsElement.style.animation = 'earningsGlow 2s infinite alternate, countUp 1.5s ease-out forwards 1.6s, earningsScale 4s infinite';
+            }
+            
+            // 重置重启按钮的动画
+            const restartButton = document.getElementById('restart-button');
+            if (restartButton) {
+                restartButton.style.animation = 'none';
+                restartButton.style.opacity = '0';
+                void restartButton.offsetWidth;
+                restartButton.style.animation = 'fadeIn 0.8s ease-out forwards 1.8s';
+            }
         }
         
         // 显示游戏结束界面
         gameOverScreen.style.display = 'block';
+        
+        // 确保在移动设备上所有元素立即可见
+        if (isMobile) {
+            const allElements = gameOverScreen.querySelectorAll('*');
+            allElements.forEach(el => {
+                el.style.opacity = '1';
+                el.style.animation = 'none';
+            });
+        }
     }
     
     // 使用自定义引擎更新函数，以便我们可以控制背景移动
